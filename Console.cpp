@@ -1,24 +1,24 @@
-#include "Console.h"
-#include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <iostream>
+#include "Console.h"
 #include "Util.h"
 
 void Console::setColor(int color) {}
 
-void Console::printLine(const std::string& text, int color) {}
+void Console::printLine(const string& text, int color) {}
 
-void Console::printTitle(const std::string& title) {}
+void Console::printTitle(const string& title) {}
 
-void Console::printSuccess(const std::string& message) {}
+void Console::printSuccess(const string& message) {}
 
-void Console::printError(const std::string& message) {}
+void Console::printError(const string& message) {}
 
-std::string Console::readLine(const std::string& prompt) {
+string Console::readLine(const string& prompt) {
     return "";
 }
 
-std::string Console::readPassword(const std::string& prompt) {
+string Console::readPassword(const string& prompt) {
     return "";
 }
 
@@ -26,7 +26,7 @@ int Console::readChoice(int maxChoice) {
     return -1;
 }
 
-bool Console::confirm(const std::string& question) {
+bool Console::confirm(const string& question) {
     return false;
 }
 

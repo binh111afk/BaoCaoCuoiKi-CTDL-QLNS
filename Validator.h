@@ -3,33 +3,35 @@
 #include "Util.h"
 #include "UserProfile.h"
 
+using namespace std;
+
 class Validator {
 public:
-    static std::string checkUsername(const std::string& s) {
+    static string checkUsername(const string& s) {
         return "";
     }
 
-    static std::string checkPassword(const std::string& s) {
+    static string checkPassword(const string& s) {
         return "";
     }
 
-    static std::string checkFullName(const std::string& s) {
+    static string checkFullName(const string& s) {
         return "";
     }
 
-    static std::string checkAddress(const std::string& s) {
+    static string checkAddress(const string& s) {
         return "";
     }
 
-    static std::string checkPhone(const std::string& s) {
+    static string checkPhone(const string& s) {
         return "";
     }
 
-    static std::string checkEmail(const std::string& s) {
+    static string checkEmail(const string& s) {
         return "";
     }
 
-    static std::string checkField(ProfileField field, const std::string& value) {
+    static string checkField(ProfileField field, const string& value) {
         return "";
     }
 };

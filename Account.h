@@ -2,36 +2,38 @@
 #include <string>
 #include "Util.h"
 
+using namespace std;
+
 enum class Role { ADMIN, EMPLOYEE };
 
 class Account {
 private:
-    std::string m_username;
-    std::string m_password;
+    string m_username;
+    string m_password;
 
 public:
-    Account(const std::string& username, const std::string& password) {}
+    Account(const string& username, const string& password) {}
     virtual ~Account() {}
 
-    std::string getUsername() const {
+    string getUsername() const {
         return "";
     }
 
-    std::string getPassword() const {
+    string getPassword() const {
         return "";
     }
 
-    bool matchesUsername(const std::string& name) const {
+    bool matchesUsername(const string& name) const {
         return false;
     }
 
-    bool checkPassword(const std::string& password) const {
+    bool checkPassword(const string& password) const {
         return false;
     }
 
-    void setPassword(const std::string& newPassword) {}
+    void setPassword(const string& newPassword) {}
 
-    virtual std::string toLine() const = 0;
+    virtual string toLine() const = 0;
 
     virtual Role getRole() const = 0;
 };

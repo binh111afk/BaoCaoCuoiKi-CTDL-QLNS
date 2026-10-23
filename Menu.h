@@ -3,20 +3,22 @@
 #include <vector>
 #include "UserProfile.h"
 
+using namespace std;
+
 class Menu {
 private:
-    virtual std::vector<std::string> getOptions() const = 0;
+    virtual vector<string> getOptions() const = 0;
 
     virtual void handleChoice(int choice) = 0;
 
-    std::string m_title;
-    std::string m_exitLabel;
+    string m_title;
+    string m_exitLabel;
 
 public:
-    Menu(const std::string& title, const std::string& exitLabel);
+    Menu(const string& title, const string& exitLabel);
     virtual ~Menu() {}
 
     void run();
 
-    static void printProfile(const std::string& username, const UserProfile& profile);
+    static void printProfile(const string& username, const UserProfile& profile);
 };

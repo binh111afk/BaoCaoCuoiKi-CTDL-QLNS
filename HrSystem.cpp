@@ -4,58 +4,58 @@
 
 HrSystem::HrSystem() {}
 
-bool HrSystem::initialize(std::vector<std::string>& messages) {
+bool HrSystem::initialize(vector<string>& messages) {
     return false;
 }
 
-bool HrSystem::login(const std::string& username, const std::string& password,
-                     Role& role, std::string& accountName) {
+bool HrSystem::login(const string& username, const string& password,
+                     Role& role, string& accountName) {
     return false;
 }
 
-bool HrSystem::needsPasswordChange(const std::string& username) {
+bool HrSystem::needsPasswordChange(const string& username) {
     return false;
 }
 
-bool HrSystem::verifyPassword(const std::string& username, const std::string& password) {
+bool HrSystem::verifyPassword(const string& username, const string& password) {
     return false;
 }
 
-std::string HrSystem::checkNewUsername(const std::string& username) {
+string HrSystem::checkNewUsername(const string& username) {
     return "";
 }
 
-std::string HrSystem::checkNewPassword(const std::string& username, const std::string& newPassword) {
+string HrSystem::checkNewPassword(const string& username, const string& newPassword) {
     return "";
 }
 
-std::string HrSystem::addEmployee(const std::string& username, const UserProfile& profile) {
+string HrSystem::addEmployee(const string& username, const UserProfile& profile) {
     return "";
 }
 
-std::string HrSystem::removeEmployee(const std::string& username) {
+string HrSystem::removeEmployee(const string& username) {
     return "";
 }
 
-std::string HrSystem::findEmployee(const std::string& username, UserProfile& profile) {
+string HrSystem::findEmployee(const string& username, UserProfile& profile) {
     return "";
 }
 
-std::string HrSystem::updateField(const std::string& username, ProfileField field,
-                                  const std::string& value) {
+string HrSystem::updateField(const string& username, ProfileField field,
+                             const string& value) {
     return "";
 }
 
-void HrSystem::listEmployees(std::vector<std::string>& usernames) {}
+void HrSystem::listEmployees(vector<string>& usernames) {}
 
-std::string HrSystem::changePassword(const std::string& username, const std::string& newPassword) {
+string HrSystem::changePassword(const string& username, const string& newPassword) {
     return "";
 }
 
-bool HrSystem::isUsernameTaken(const std::string& username) const {
+bool HrSystem::isUsernameTaken(const string& username) const {
     return false;
 }
 
-std::string HrSystem::profilePath(const std::string& username) {
+string HrSystem::profilePath(const string& username) {
     return "";
 }

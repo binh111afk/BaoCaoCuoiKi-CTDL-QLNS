@@ -2,27 +2,29 @@
 #include <string>
 #include "Account.h"
 
+using namespace std;
+
 class Employee : public Account {
 private:
     bool m_needsPasswordChange;
 
 public:
-    Employee(const std::string& username = "", const std::string& password = "",
+    Employee(const string& username = "", const string& password = "",
              bool needsPasswordChange = false) {}
 
-    static std::string defaultPassword() {
+    static string defaultPassword() {
         return "";
     }
 
-    static Employee createNew(const std::string& username) {
+    static Employee createNew(const string& username) {
         return Employee();
     }
 
-    static bool fromLine(const std::string& line, Employee& out) {
+    static bool fromLine(const string& line, Employee& out) {
         return false;
     }
 
-    std::string toLine() const override {
+    string toLine() const override {
         return "";
     }
 

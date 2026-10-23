@@ -4,9 +4,11 @@
 #include "Menu.h"
 #include "HrSystem.h"
 
+using namespace std;
+
 class AdminMenu : public Menu {
 private:
-    std::vector<std::string> getOptions() const override;
+    vector<string> getOptions() const override;
 
     void handleChoice(int choice) override;
 
@@ -23,5 +25,5 @@ private:
     HrSystem& m_system;
 
 public:
-    AdminMenu(HrSystem& system, const std::string& username);
+    AdminMenu(HrSystem& system, const string& username);
 };

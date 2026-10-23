@@ -7,6 +7,6 @@ int Application::run() {
     return 0;
 }
 
-bool Application::login(std::string& accountName, Role& role) {
+bool Application::login(string& accountName, Role& role) {
     return false;
 }

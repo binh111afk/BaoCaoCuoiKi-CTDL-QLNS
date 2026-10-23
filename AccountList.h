@@ -4,6 +4,8 @@
 #include <vector>
 #include "Util.h"
 
+using namespace std;
+
 template <typename T>
 class AccountList {
 private:
@@ -11,11 +13,11 @@ private:
         return false;
     }
 
-    std::vector<T> m_items;
-    std::string m_filePath;
+    vector<T> m_items;
+    string m_filePath;
 
 public:
-    AccountList(const std::string& filePath) {}
+    AccountList(const string& filePath) {}
 
     bool load() {
         return false;
@@ -34,7 +36,7 @@ public:
         return item;
     }
 
-    int indexOf(const std::string& username) const {
+    int indexOf(const string& username) const {
         return -1;
     }
 

@@ -2,10 +2,10 @@
 #include "Console.h"
 #include "Validator.h"
 
-AdminMenu::AdminMenu(HrSystem& system, const std::string& username) {}
+AdminMenu::AdminMenu(HrSystem& system, const string& username) {}
 
-std::vector<std::string> AdminMenu::getOptions() const {
-    return std::vector<std::string>();
+vector<string> AdminMenu::getOptions() const {
+    return vector<string>();
 }
 
 void AdminMenu::handleChoice(int choice) {}

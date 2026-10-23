@@ -4,9 +4,11 @@
 #include "Menu.h"
 #include "HrSystem.h"
 
+using namespace std;
+
 class EmployeeMenu : public Menu {
 private:
-    std::vector<std::string> getOptions() const override;
+    vector<string> getOptions() const override;
 
     void handleChoice(int choice) override;
 
@@ -14,13 +16,13 @@ private:
 
     void changePassword();
 
-    bool askNewPassword(std::string& newPassword);
+    bool askNewPassword(string& newPassword);
 
     HrSystem& m_system;
-    std::string m_username;
+    string m_username;
 
 public:
-    EmployeeMenu(HrSystem& system, const std::string& username);
+    EmployeeMenu(HrSystem& system, const string& username);
 
     bool forcePasswordChange();
 };

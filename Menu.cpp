@@ -1,8 +1,8 @@
 #include "Menu.h"
 #include "Console.h"
 
-Menu::Menu(const std::string& title, const std::string& exitLabel) {}
+Menu::Menu(const string& title, const string& exitLabel) {}
 
 void Menu::run() {}
 
-void Menu::printProfile(const std::string& username, const UserProfile& profile) {}
+void Menu::printProfile(const string& username, const UserProfile& profile) {}

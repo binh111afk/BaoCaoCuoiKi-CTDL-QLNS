@@ -2,15 +2,17 @@
 #include <string>
 #include "Account.h"
 
+using namespace std;
+
 class Admin : public Account {
 public:
-    Admin(const std::string& username = "", const std::string& password = "") {}
+    Admin(const string& username = "", const string& password = "") {}
 
-    static bool fromLine(const std::string& line, Admin& out) {
+    static bool fromLine(const string& line, Admin& out) {
         return false;
     }
 
-    std::string toLine() const override {
+    string toLine() const override {
         return "";
     }
 

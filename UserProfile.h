@@ -2,30 +2,32 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 enum class ProfileField { FULL_NAME, ADDRESS, PHONE, EMAIL };
 
 class UserProfile {
 private:
-    std::string m_values[4];
+    string m_values[4];
 
 public:
     static const int FIELD_COUNT = 4;
 
-    std::string get(ProfileField field) const {
+    string get(ProfileField field) const {
         return "";
     }
 
-    void set(ProfileField field, const std::string& value) {}
+    void set(ProfileField field, const string& value) {}
 
-    static std::string labelOf(ProfileField field) {
+    static string labelOf(ProfileField field) {
         return "";
     }
 
-    std::vector<std::string> toLines() const {
-        return std::vector<std::string>();
+    vector<string> toLines() const {
+        return vector<string>();
     }
 
-    static bool fromLines(const std::vector<std::string>& lines, UserProfile& out) {
+    static bool fromLines(const vector<string>& lines, UserProfile& out) {
         return false;
     }
 };

@@ -7,11 +7,13 @@
 #include "AccountList.h"
 #include "UserProfile.h"
 
+using namespace std;
+
 class HrSystem {
 private:
-    bool isUsernameTaken(const std::string& username) const;
+    bool isUsernameTaken(const string& username) const;
 
-    static std::string profilePath(const std::string& username);
+    static string profilePath(const string& username);
 
     AccountList<Admin> m_admins;
     AccountList<Employee> m_employees;
@@ -19,28 +21,28 @@ private:
 public:
     HrSystem();
 
-    bool initialize(std::vector<std::string>& messages);
+    bool initialize(vector<string>& messages);
 
-    bool login(const std::string& username, const std::string& password,
-               Role& role, std::string& accountName);
+    bool login(const string& username, const string& password,
+               Role& role, string& accountName);
 
-    bool needsPasswordChange(const std::string& username);
+    bool needsPasswordChange(const string& username);
 
-    bool verifyPassword(const std::string& username, const std::string& password);
+    bool verifyPassword(const string& username, const string& password);
 
-    std::string checkNewUsername(const std::string& username);
+    string checkNewUsername(const string& username);
 
-    std::string checkNewPassword(const std::string& username, const std::string& newPassword);
+    string checkNewPassword(const string& username, const string& newPassword);
 
-    std::string addEmployee(const std::string& username, const UserProfile& profile);
+    string addEmployee(const string& username, const UserProfile& profile);
 
-    std::string removeEmployee(const std::string& username);
+    string removeEmployee(const string& username);
 
-    std::string findEmployee(const std::string& username, UserProfile& profile);
+    string findEmployee(const string& username, UserProfile& profile);
 
-    std::string updateField(const std::string& username, ProfileField field, const std::string& value);
+    string updateField(const string& username, ProfileField field, const string& value);
 
-    void listEmployees(std::vector<std::string>& usernames);
+    void listEmployees(vector<string>& usernames);
 
-    std::string changePassword(const std::string& username, const std::string& newPassword);
+    string changePassword(const string& username, const string& newPassword);
 };
