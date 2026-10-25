@@ -22,8 +22,8 @@ string Console::readPassword(const string& prompt) {
     return "";
 }
 
-int Console::readChoice(int maxChoice) {
-    return -1;
+int Console::chooseOption(const vector<string>& items, int startAt) {
+    return startAt;
 }
 
 bool Console::confirm(const string& question) {

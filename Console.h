@@ -1,15 +1,17 @@
 #pragma once
 #include <string>
+#include <vector>
 
 using namespace std;
 
 class Console {
 public:
-    static const int COLOR_NORMAL  = 7;
-    static const int COLOR_TITLE   = 14;
-    static const int COLOR_LABEL   = 10;
-    static const int COLOR_SUCCESS = 11;
-    static const int COLOR_ERROR   = 12;
+    static const int COLOR_NORMAL   = 7;
+    static const int COLOR_TITLE    = 14;
+    static const int COLOR_LABEL    = 10;
+    static const int COLOR_SUCCESS  = 11;
+    static const int COLOR_ERROR    = 12;
+    static const int COLOR_SELECTED = 112;
 
     static void setColor(int color);
 
@@ -25,7 +27,7 @@ public:
 
     static string readPassword(const string& prompt);
 
-    static int readChoice(int maxChoice);
+    static int chooseOption(const vector<string>& items, int startAt = 1);
 
     static bool confirm(const string& question);
 
