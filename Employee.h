@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Account.h"
+#include <sstream>
 
 using namespace std;
 
@@ -10,18 +11,32 @@ private:
 
 public:
     Employee(const string& username = "", const string& password = "",
-             bool needsPasswordChange = false) {}
+             bool needsPasswordChange = false) : Account(username, password) {
+                this -> m_needsPasswordChange = needsPasswordChange;
+             }
 
     static string defaultPassword() {
-        return "";
+        return "111111";
     }
 
     static Employee createNew(const string& username) {
-        return Employee();
+        return Employee(username, Employee::defaultPassword(), true);
     }
 
     static bool fromLine(const string& line, Employee& out) {
-        return false;
+      istringstream in = istringstream(line);
+      string username;
+      string password;
+      bool flag;
+      
+      in >> username >> password >> flag;
+
+      this -> m_username = username;
+      this -> m_password = password;
+      this -> m_needPasswordChange = flag;
+
+      return true;
+
     }
 
     string toLine() const override {
@@ -29,12 +44,19 @@ public:
     }
 
     Role getRole() const override {
-        return Role();
+        return Role::EMPLOYEE;
     }
 
     bool needsPasswordChange() const {
-        return false;
+        return m_needsPasswordChange;
     }
 
-    void setNeedsPasswordChange(bool value) {}
+    void setNeedsPasswordChange(bool value) {
+      m_needsPasswordChange  = value;
+    }
 };
+
+void test_Employe(){
+
+  //
+}
