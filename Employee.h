@@ -11,8 +11,8 @@ private:
 
 public:
     Employee(const string& username = "", const string& password = "",
-             bool needsPasswordChange = false) : Account(username, password) {
-                this -> m_needsPasswordChange = needsPasswordChange;
+             bool needsPasswordChange = false) : 
+             Account(username, password), m_needsPasswordChange(needsPasswordChange) {
              }
 
     static string defaultPassword() {
@@ -20,27 +20,42 @@ public:
     }
 
     static Employee createNew(const string& username) {
-        return Employee(username, Employee::defaultPassword(), true);
+        return Employee(username, defaultPassword(), true);
     }
 
+    // Nhập thông tin từ string line vào Employee out
     static bool fromLine(const string& line, Employee& out) {
-      istringstream in = istringstream(line);
+      istringstream stream = istringstream(line);
       string username;
       string password;
-      bool flag;
-      
-      in >> username >> password >> flag;
+      string flag;
+      string extra;
 
-      this -> m_username = username;
-      this -> m_password = password;
-      this -> m_needPasswordChange = flag;
+      stream >> username >> password >> flag;
+      if (!stream){ return false; }
+
+      if (stream >> extra) {return false;}
+
+      if (flag != "0" && flag != "1") {
+        return false;
+      }
+
+      if (flag == "1") {
+        out = Employee(username, password, true);
+        return true;
+      }
+
+      out = Employee(username, password, false);
 
       return true;
-
     }
 
     string toLine() const override {
-        return "";
+        string flag;
+        if (m_needsPasswordChange) {flag = "1";}
+        else {flag = "0";}
+
+        return getUsername() + " " + getPassword() + " " + flag;
     }
 
     Role getRole() const override {
@@ -56,7 +71,3 @@ public:
     }
 };
 
-void test_Employe(){
-
-  //
-}
