@@ -34,6 +34,7 @@ public:
         return false;
     }
 
+    // Tạo thư mục path cùng các thư mục cha còn thiếu, nếu chưa có; trả true nếu thư mục vừa mới tạo hoặc đã có sẵn
     static bool ensureFolder(const string& path) {
         return false;
     }

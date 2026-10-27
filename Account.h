@@ -15,6 +15,7 @@ public:
     Account(const string& username, const string& password) {}
     virtual ~Account() {}
 
+    // Trả về tên đăng nhập của một tài khoản
     string getUsername() const {
         return "";
     }
