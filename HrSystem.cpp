@@ -16,51 +16,49 @@ bool HrSystem::initialize(vector<string>& messages) {
 
 bool HrSystem::login(const string& username, const string& password,
                      Role& role, string& accountName) {
-    int adminIdx = m_admins.indexOf(username);
-    if (adminIdx != -1) {
-        if (m_admins.at(adminIdx).checkPassword(password)) {
-            role = Role::ADMIN;
-            accountName = m_admins.at(adminIdx).getUsername();
-            return true;
-        }
-        return false;
+
+    int index = m_admins.indexOf(username);
+    if (index != -1 && m_admins.at(index).checkPassword(password)) {
+        role = m_admins.at(index).getRole();
+        accountName = m_admins.at(index).getUsername();
+        return true;
     }
 
-    int empIdx = m_employees.indexOf(username);
-    if (empIdx != -1) {
-        if (m_employees.at(empIdx).checkPassword(password)) {
-            role = Role::EMPLOYEE;
-            accountName = m_employees.at(empIdx).getUsername();
-            return true;
-        }
+    index = m_employees.indexOf(username);
+    if (index != -1 && m_employees.at(index).checkPassword(password)) {
+        role = m_employees.at(index).getRole();
+        accountName = m_employees.at(index).getUsername();
+        return true;
     }
+
     return false;
 }
 
 bool HrSystem::needsPasswordChange(const string& username) {
-    int empIdx = m_employees.indexOf(username);
-    if (empIdx != -1) {
-        return m_employees.at(empIdx).needsPasswordChange();
+    int index = m_employees.indexOf(username);
+    if (index == -1) {
+        return false;
     }
-    return false;
+    return m_employees.at(index).needsPasswordChange();
 }
 
 bool HrSystem::verifyPassword(const string& username, const string& password) {
-    int empIdx = m_employees.indexOf(username);
-    if (empIdx != -1) {
-        return m_employees.at(empIdx).checkPassword(password);
+    int index = m_employees.indexOf(username);
+    if (index == -1) {
+        return false;
     }
-    return false;
+    return m_employees.at(index).checkPassword(password);
 }
 
 string HrSystem::checkNewUsername(const string& username) {
-    string err = Validator::checkUsername(username);
-    if (!err.empty()) {
-        return err;
+    string error = Validator::checkUsername(username);
+    if (error != "") {
+        return error;
     }
     if (isUsernameTaken(username)) {
-        return "Ten dang nhap da ton tai";
+        return "Username da ton tai";
     }
+    
     return "";
 }
 
