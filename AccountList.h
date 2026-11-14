@@ -6,17 +6,23 @@
 
 using namespace std;
 
+// Danh sách tài khoản (Admin hoặc Employee) nằm trong bộ nhớ, gắn với một file txt để nạp và ghi lại
 template <typename T>
 class AccountList {
 private:
+    // So sánh hai tài khoản theo username (chữ thường), dùng cho sortByUsername
     static bool lessByUsername(const T& a, const T& b) {
         return Util::toLower(a.getUsername()) < Util::toLower(b.getUsername());
     }
 
+    // Các tài khoản đang có trong bộ nhớ
     vector<T> m_items;
+
+    // Đường dẫn tới file txt chứa danh sách tài khoản
     string m_filePath;
 
 public:
+    // Tạo danh sách rỗng gắn với file filePath, chưa đọc file (gọi load để nạp)
     AccountList(const string& filePath) : m_filePath(filePath) {}
 
     // Bắt đầu đọc từng dòng của file tài khoản thành đối tượng tài khoản, trả về false nếu chưa có file

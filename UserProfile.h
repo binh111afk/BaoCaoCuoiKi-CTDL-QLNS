@@ -4,13 +4,17 @@
 
 using namespace std;
 
+// Bốn thông tin trong hồ sơ của một nhân viên, thứ tự cũng là thứ tự các dòng trong file [username].txt
 enum class ProfileField { FULL_NAME, ADDRESS, PHONE, EMAIL };
 
+// Hồ sơ của một nhân viên: họ tên, địa chỉ, số điện thoại, email
 class UserProfile {
 private:
+    // Giá trị của 4 thông tin, đánh số theo ProfileField
     string m_values[4];
 
 public:
+    // Số lượng thông tin trong một hồ sơ
     static const int FIELD_COUNT = 4;
 
     // Trả giá trị của thông tin field

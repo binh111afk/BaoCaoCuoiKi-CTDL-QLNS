@@ -8,9 +8,11 @@ using namespace std;
 // Một đối tượng Employee được tạo ra khi mà chương trình nạp vào một tài khoản nhân viên
 class Employee : public Account {
 private:
+    // Bằng true nếu nhân viên phải đổi mật khẩu ở lần đăng nhập tới
     bool m_needsPasswordChange;
 
 public:
+    // Tạo tài khoản nhân viên, không truyền tham số thì được nhân viên rỗng để fromLine điền dữ liệu vào sau
     Employee(const string& username = "", const string& password = "",
              bool needsPasswordChange = false)
         : Account(username, password), m_needsPasswordChange(needsPasswordChange) {
