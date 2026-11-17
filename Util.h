@@ -1,92 +1,72 @@
 #pragma once
-#include <filesystem>
-#include <fstream>
 #include <string>
 #include <vector>
-
-using namespace std;
 
 // Các hàm tĩnh dùng chung: xử lý chuỗi, đọc ghi file và tạo thư mục
 class Util {
 public:
-    // Trả về bản sao của chuỗi s đã bỏ khoảng trắng (dấu cách, tab, \r, \n) ở đầu và cuối
-    static string trim(const string& s) {
-        size_t first = s.find_first_not_of(" \t\r\n");
-        if (first == string::npos) {
-            return "";
-        }
-        size_t last = s.find_last_not_of(" \t\r\n");
-        return s.substr(first, last - first + 1);
-    }
+    /**********************************************************
+    * @Description Bỏ khoảng trắng (dấu cách, tab, \r, \n) ở đầu và cuối chuỗi text
+    *
+    * @return Bản sao của text đã bỏ khoảng trắng đầu cuối
+    * @attention Trả về chuỗi rỗng nếu text chỉ gồm khoảng trắng
+    **********************************************************/
+    static std::string trim(const std::string& text);
 
-    // Trả về bản sao của chuỗi s với các chữ A-Z đổi thành a-z
-    static string toLower(const string& s) {
-        string result = s;
-        for (size_t i = 0; i < result.size(); i++) {
-            if (result[i] >= 'A' && result[i] <= 'Z') {
-                result[i] = static_cast<char>(result[i] - 'A' + 'a');
-            }
-        }
-        return result;
-    }
+    /**********************************************************
+    * @Description Đổi các chữ A-Z trong chuỗi text thành a-z
+    *
+    * @return Bản sao của text đã đổi thành chữ thường
+    **********************************************************/
+    static std::string toLower(const std::string& text);
 
-    // Trả về true nếu hai chuỗi a và b giống nhau khi không phân biệt hoa thường
-    static bool equalsIgnoreCase(const string& a, const string& b) {
-        return toLower(a) == toLower(b);
-    }
+    /**********************************************************
+    * @Description So sánh hai chuỗi first và second mà không phân biệt hoa thường
+    *
+    * @return true nếu hai chuỗi giống nhau
+    **********************************************************/
+    static bool equalsIgnoreCase(const std::string& first, const std::string& second);
 
-    // Trả về true nếu chuỗi s không rỗng và chỉ gồm các chữ số 0-9
-    static bool isAllDigits(const string& s) {
-        if (s.empty()) {
-            return false;
-        }
-        for (size_t i = 0; i < s.size(); i++) {
-            if (s[i] < '0' || s[i] > '9') {
-                return false;
-            }
-        }
-        return true;
-    }
+    /**********************************************************
+    * @Description Kiểm tra chuỗi text có chỉ gồm các chữ số 0-9 hay không
+    *
+    * @return true nếu text không rỗng và chỉ gồm chữ số
+    **********************************************************/
+    static bool isAllDigits(const std::string& text);
 
-    // Đọc từng dòng của file path (đã bỏ khoảng trắng đầu cuối) vào lines, trả về false nếu không mở được file
-    static bool readLines(const string& path, vector<string>& lines) {
-        lines.clear();
-        ifstream file(path);
-        if (!file.is_open()) {
-            return false;
-        }
+    /**********************************************************
+    * @Description Đọc từng dòng của file path (đã bỏ khoảng trắng đầu cuối) vào lines
+    *
+    * @return true nếu đọc được file
+    * @attention Trả về false và lines rỗng nếu không mở được file
+    **********************************************************/
+    static bool readLines(const std::string& path, std::vector<std::string>& lines);
 
-        string line;
-        while (getline(file, line)) {
-            lines.push_back(trim(line));
-        }
-        return true;
-    }
+    /**********************************************************
+    * @Description Ghi đè file path bằng các dòng trong lines (chưa có file thì tạo mới)
+    *
+    * @return true nếu ghi được file
+    * @attention Thư mục chứa file phải tồn tại trước
+    **********************************************************/
+    static bool writeLines(const std::string& path, const std::vector<std::string>& lines);
 
-    // Ghi đè file path bằng các dòng trong lines (chưa có file thì tạo mới), trả về false nếu không ghi được
-    static bool writeLines(const string& path, const vector<string>& lines) {
-        ofstream file(path);
-        if (!file.is_open()) {
-            return false;
-        }
+    /**********************************************************
+    * @Description Xóa file path khỏi ổ đĩa
+    *
+    * @return true nếu đã xóa
+    * @attention Trả về false nếu file không có hoặc không xóa được
+    **********************************************************/
+    static bool deleteFile(const std::string& path);
 
-        for (size_t i = 0; i < lines.size(); i++) {
-            file << lines[i] << "\n";
-        }
-        file.flush();
-        return !file.fail();
-    }
+    /**********************************************************
+    * @Description Tạo thư mục path cùng các thư mục cha còn thiếu, nếu chưa có
+    *
+    * @return true nếu thư mục vừa mới tạo hoặc đã có sẵn
+    * @attention path không có dấu / ở cuối
+    **********************************************************/
+    static bool ensureFolder(const std::string& path);
 
-    // Xóa file path, trả về true nếu đã xóa, false nếu file không có hoặc không xóa được
-    static bool deleteFile(const string& path) {
-        error_code error;
-        return filesystem::remove(path, error);
-    }
-
-    // Tạo thư mục path cùng các thư mục cha còn thiếu, nếu chưa có; trả true nếu thư mục vừa mới tạo hoặc đã có sẵn
-    static bool ensureFolder(const string& path) {
-        error_code error;
-        filesystem::create_directories(path, error);
-        return filesystem::is_directory(path, error);
-    }
+private:
+    // Các ký tự được xem là khoảng trắng khi cắt chuỗi
+    static const char* const WHITESPACE;
 };

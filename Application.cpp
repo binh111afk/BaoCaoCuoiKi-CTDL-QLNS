@@ -3,19 +3,18 @@
 #include "AdminMenu.h"
 #include "EmployeeMenu.h"
 
+using namespace std;
+
 int Application::run() {
     vector<string> messages;
-    bool ready = m_system.initialize(messages);
+    const bool bReady = this->m_system.initialize(messages);
 
-    int color = Console::COLOR_TITLE;
-    if (!ready) {
-        color = Console::COLOR_ERROR;
-    }
-    for (size_t i = 0; i < messages.size(); i++) {
-        Console::printLine(messages[i], color);
+    const int iColor = bReady ? Console::COLOR_TITLE : Console::COLOR_ERROR;
+    for (size_t iIndex = 0; iIndex < messages.size(); iIndex++) {
+        Console::printLine(messages[iIndex], iColor);
     }
 
-    if (!ready) {
+    if (!bReady) {
         Console::printError("Khong chuan bi duoc du lieu, chuong trinh se thoat");
         Console::pause();
         return 1;
@@ -26,26 +25,30 @@ int Application::run() {
     }
 
     while (true) {
-        string accountName;
-        Role role = Role::EMPLOYEE;
-        if (!login(accountName, role)) {
+        string strAccountName;
+        Role eRole = Role::EMPLOYEE;
+        if (!this->login(strAccountName, eRole)) {
             Console::printLine("Tam biet!");
             return 0;
         }
 
-        if (role == Role::ADMIN) {
-            AdminMenu menu(m_system, accountName);
-            menu.run();
-        } else {
-            EmployeeMenu menu(m_system, accountName);
-            bool canEnter = true;
-            if (m_system.needsPasswordChange(accountName)) {
-                canEnter = menu.forcePasswordChange();
-                Console::pause();
+        switch (eRole) {
+            case Role::ADMIN: {
+                AdminMenu adminMenu(this->m_system, strAccountName);
+                adminMenu.run();
+                break;
             }
-            if (canEnter) {
-                menu.run();
+
+            case Role::EMPLOYEE: {
+                EmployeeMenu employeeMenu(this->m_system, strAccountName);
+                if (!this->m_system.needsPasswordChange(strAccountName) || employeeMenu.forcePasswordChange()) {
+                    employeeMenu.run();
+                }
+                break;
             }
+
+            default:
+                break;
         }
     }
 }
@@ -55,25 +58,25 @@ bool Application::login(string& accountName, Role& role) {
     Console::printTitle("DANG NHAP");
     Console::printLine("(De trong User de thoat)", Console::COLOR_LABEL);
 
-    int fails = 0;
-    while (fails < MAX_FAILS) {
-        string username = Console::readLine("User: ");
-        if (username == "") {
+    int iFails = 0;
+    while (iFails < Application::MAX_FAILS) {
+        const string strUsername = Console::readLine("User: ");
+        if (strUsername == "") {
             return false;
         }
 
-        string password = Console::readPassword("Pass: ");
-        if (m_system.login(username, password, role, accountName)) {
+        const string strPassword = Console::readPassword("Pass: ");
+        if (this->m_system.login(strUsername, strPassword, role, accountName)) {
             return true;
         }
 
-        fails++;
-        if (fails < MAX_FAILS) {
-            Console::printError("Sai tai khoan hoac mat khau. Con " + to_string(MAX_FAILS - fails) + " lan thu.");
+        iFails++;
+        if (iFails < Application::MAX_FAILS) {
+            Console::printError("Sai tai khoan hoac mat khau. Con " + to_string(Application::MAX_FAILS - iFails) + " lan thu.");
         }
     }
 
-    Console::printError("Sai " + to_string(MAX_FAILS) + " lan, chuong trinh ket thuc.");
+    Console::printError("Sai " + to_string(Application::MAX_FAILS) + " lan, chuong trinh ket thuc.");
     Console::pause();
     return false;
 }

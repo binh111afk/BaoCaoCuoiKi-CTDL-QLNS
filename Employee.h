@@ -1,88 +1,75 @@
 #pragma once
 #include <string>
 #include "Account.h"
-#include <sstream>
-
-using namespace std;
 
 // Một đối tượng Employee được tạo ra khi mà chương trình nạp vào một tài khoản nhân viên
 class Employee : public Account {
-private:
-    // Bằng true nếu nhân viên phải đổi mật khẩu ở lần đăng nhập tới
-    bool m_needsPasswordChange;
-
 public:
-    // Tạo tài khoản nhân viên, không truyền tham số thì được nhân viên rỗng để fromLine điền dữ liệu vào sau
-    Employee(const string& username = "", const string& password = "",
-             bool needsPasswordChange = false)
-        : Account(username, password), m_needsPasswordChange(needsPasswordChange) {
-    }
+    /**********************************************************
+    * @Description Tạo tài khoản nhân viên với tên đăng nhập username, mật khẩu password và cờ needsPasswordChange
+    *
+    * @attention Không truyền tham số thì được nhân viên rỗng để fromLine điền dữ liệu vào sau
+    **********************************************************/
+    Employee(const std::string& username = "", const std::string& password = "",
+             const bool needsPasswordChange = false);
 
-    // Mật khẩu của một tài khoản nhân viên
-    static string defaultPassword() {
-        return "111111";
-    }
+    /**********************************************************
+    * @Description Lấy mật khẩu mặc định của một tài khoản nhân viên mới
+    *
+    * @return Mật khẩu mặc định
+    **********************************************************/
+    static std::string defaultPassword();
 
-    // Tạo mới một tài khoản nhân viên (mật khẩu mặc định)
-    static Employee createNew(const string& username) {
-        return Employee(username, defaultPassword(), true);
-    }
+    /**********************************************************
+    * @Description Tạo mới một tài khoản nhân viên với mật khẩu mặc định
+    *
+    * @return Tài khoản nhân viên mới, có cờ bắt đổi mật khẩu ở lần đăng nhập đầu
+    **********************************************************/
+    static Employee createNew(const std::string& username);
 
-    // Nhập thông tin từ string line vào Employee out
-    static bool fromLine(const string& line, Employee& out) {
-        istringstream stream = istringstream(line);
-        string username;
-        string password;
-        string flag;
-        string extra;
+    /**********************************************************
+    * @Description Nhập thông tin từ string line vào Employee out
+    *
+    * @return true nếu line có đúng 3 từ (tên, mật khẩu, cờ đổi mật khẩu 0 hoặc 1)
+    **********************************************************/
+    static bool fromLine(const std::string& line, Employee& out);
 
-        stream >> username >> password >> flag;
-        if (!stream) {
-            return false;
-        }
+    /**********************************************************
+    * @Description Tạo chuỗi thể hiện tên, mật khẩu, cờ đổi mật khẩu của tài khoản nhân viên
+    *
+    * @return Một dòng của file Employees.txt
+    **********************************************************/
+    std::string toLine() const override;
 
-        if (stream >> extra) {
-            return false;
-        }
+    /**********************************************************
+    * @Description Lấy vai trò của tài khoản nhân viên
+    *
+    * @return Role::EMPLOYEE
+    **********************************************************/
+    Role getRole() const override;
 
-        if (flag != "0" && flag != "1") {
-            return false;
-        }
+    /**********************************************************
+    * @Description Kiểm tra tài khoản nhân viên có cần đổi mật khẩu hay không
+    *
+    * @return true nếu cần đổi mật khẩu
+    **********************************************************/
+    bool needsPasswordChange() const;
 
-        if (flag == "1") {
-            out = Employee(username, password, true);
-            return true;
-        }
+    /**********************************************************
+    * @Description Đặt cờ đổi mật khẩu của tài khoản nhân viên thành value
+    **********************************************************/
+    void setNeedsPasswordChange(const bool value);
 
-        out = Employee(username, password, false);
+private:
+    // Mật khẩu mặc định của tài khoản nhân viên mới
+    static const std::string DEFAULT_PASSWORD;
 
-        return true;
-    }
+    // Giá trị của cột cờ trong file Employees.txt khi nhân viên cần đổi mật khẩu
+    static const char* const FLAG_NEEDED;
 
-    // Trả về chuỗi thể hiện tên, mật khẩu, cờ đổi mật khẩu của tài khoản nhân viên
-    string toLine() const override {
-        string flag;
-        if (m_needsPasswordChange) {
-            flag = "1";
-        } else {
-            flag = "0";
-        }
+    // Giá trị của cột cờ trong file Employees.txt khi nhân viên không cần đổi mật khẩu
+    static const char* const FLAG_NOT_NEEDED;
 
-        return getUsername() + " " + getPassword() + " " + flag;
-    }
-
-    // Trả về vai trò của tài khoản nhân viên
-    Role getRole() const override {
-        return Role::EMPLOYEE;
-    }
-
-    // Tài khoản nhân viên nếu cần đổi mật khẩu thì trả về true
-    bool needsPasswordChange() const {
-        return m_needsPasswordChange;
-    }
-
-    // Đặt cờ đổi mật khẩu của tài khoản nhân viên
-    void setNeedsPasswordChange(bool value) {
-        m_needsPasswordChange = value;
-    }
+    // Bằng true nếu nhân viên phải đổi mật khẩu ở lần đăng nhập tới
+    bool m_bNeedsPasswordChange;
 };

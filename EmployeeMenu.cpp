@@ -1,25 +1,30 @@
 #include "EmployeeMenu.h"
 #include "Console.h"
 
+using namespace std;
+
 EmployeeMenu::EmployeeMenu(HrSystem& system, const string& username)
-    : Menu("MENU EMPLOYEE (" + username + ")", "Thoat (dang xuat)"),
-      m_system(system), m_username(username) {
+    : Menu("MENU EMPLOYEE (" + username + ")", Menu::LOGOUT_LABEL),
+      m_system(system), m_strUsername(username) {
 }
 
 bool EmployeeMenu::forcePasswordChange() {
     Console::printLine("Day la lan dang nhap dau tien, ban phai doi mat khau.", Console::COLOR_TITLE);
 
-    string newPassword;
-    while (!askNewPassword(newPassword)) {
+    string strNewPassword;
+    while (!this->askNewPassword(strNewPassword)) {
         Console::printLine("");
     }
 
-    string error = m_system.changePassword(m_username, newPassword);
-    if (error != "") {
-        Console::printError(error);
+    const string strError = this->m_system.changePassword(this->m_strUsername, strNewPassword);
+    if (strError != "") {
+        Console::printError(strError);
+        Console::pause();
         return false;
     }
+
     Console::printSuccess("Doi mat khau thanh cong");
+    Console::pause();
     return true;
 }
 
@@ -30,58 +35,65 @@ vector<string> EmployeeMenu::getOptions() const {
     };
 }
 
-void EmployeeMenu::handleChoice(int choice) {
-    if (choice == 1) {
-        showMyInfo();
-    } else if (choice == 2) {
-        changePassword();
+void EmployeeMenu::handleChoice(const int choice) {
+    switch (choice) {
+        case EmployeeMenu::CHOICE_SHOW_INFO:
+            this->showMyInfo();
+            break;
+
+        case EmployeeMenu::CHOICE_CHANGE_PASSWORD:
+            this->changePassword();
+            break;
+
+        default:
+            break;
     }
 }
 
 void EmployeeMenu::showMyInfo() {
     UserProfile profile;
-    string error = m_system.findEmployee(m_username, profile);
-    if (error != "") {
-        Console::printError(error);
+    const string strError = this->m_system.findEmployee(this->m_strUsername, profile);
+    if (strError != "") {
+        Console::printError(strError);
         return;
     }
-    printProfile(m_username, profile);
+    Menu::printProfile(this->m_strUsername, profile);
 }
 
 void EmployeeMenu::changePassword() {
-    string currentPassword = Console::readPassword("Mat khau hien tai: ");
-    if (!m_system.verifyPassword(m_username, currentPassword)) {
+    const string strCurrentPassword = Console::readPassword("Mat khau hien tai: ");
+    if (!this->m_system.verifyPassword(this->m_strUsername, strCurrentPassword)) {
         Console::printError("Mat khau hien tai khong dung");
         return;
     }
 
-    string newPassword;
-    if (!askNewPassword(newPassword)) {
+    string strNewPassword;
+    if (!this->askNewPassword(strNewPassword)) {
         return;
     }
 
-    string error = m_system.changePassword(m_username, newPassword);
-    if (error != "") {
-        Console::printError(error);
+    const string strError = this->m_system.changePassword(this->m_strUsername, strNewPassword);
+    if (strError != "") {
+        Console::printError(strError);
         return;
     }
     Console::printSuccess("Doi mat khau thanh cong");
 }
 
 bool EmployeeMenu::askNewPassword(string& newPassword) {
-    string first = Console::readPassword("Mat khau moi: ");
-    string error = m_system.checkNewPassword(m_username, first);
-    if (error != "") {
-        Console::printError(error);
+    const string strFirst = Console::readPassword("Mat khau moi: ");
+    const string strError = this->m_system.checkNewPassword(this->m_strUsername, strFirst);
+    if (strError != "") {
+        Console::printError(strError);
         return false;
     }
 
-    string second = Console::readPassword("Nhap lai mat khau moi: ");
-    if (first != second) {
+    const string strSecond = Console::readPassword("Nhap lai mat khau moi: ");
+    if (strFirst != strSecond) {
         Console::printError("Hai lan nhap mat khau moi khong khop");
         return false;
     }
 
-    newPassword = first;
+    newPassword = strFirst;
     return true;
 }

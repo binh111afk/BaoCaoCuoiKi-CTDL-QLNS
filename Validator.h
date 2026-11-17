@@ -1,137 +1,128 @@
 #pragma once
-#include <cctype>
+#include <cstddef>
 #include <string>
-#include <vector>
-#include "Util.h"
 #include "UserProfile.h"
-
-using namespace std;
 
 // Kiểm tra định dạng dữ liệu nhập, mỗi hàm trả về chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
 class Validator {
 public:
-    // Kiểm s có dùng được làm username không: 3-20 ký tự, chỉ gồm chữ không dấu, số và _, bắt đầu bằng chữ, không trùng tên file cấm của Windows
-    static string checkUsername(const string& s) {
-        if (s.length() < 3 || s.length() > 20) {
-            return "Username dai 3-20 ky tu, chi gom chu, so, _ va bat dau bang chu";
-        }
+    /**********************************************************
+    * @Description Kiểm tra username có dùng được làm tên đăng nhập không
+    *
+    * @return Chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
+    * @attention Username dài 3-20 ký tự, chỉ gồm chữ không dấu, số và _, bắt đầu bằng chữ
+    * @attention Không được trùng tên file danh riêng của Windows (con, prn, aux, nul, com1-9, lpt1-9)
+    **********************************************************/
+    static std::string checkUsername(const std::string& username);
 
-        if (!isalpha(static_cast<unsigned char>(s[0]))) {
-            return "Username dai 3-20 ky tu, chi gom chu, so, _ va bat dau bang chu";
-        }
+    /**********************************************************
+    * @Description Kiểm tra password có dùng được làm mật khẩu không
+    *
+    * @return Chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
+    * @attention Mật khẩu dài 6-20 ký tự, mỗi ký tự có mã từ 33 đến 126 (không dấu cách, không chữ có dấu)
+    **********************************************************/
+    static std::string checkPassword(const std::string& password);
 
-        for (size_t i = 0; i < s.length(); i++) {
-            if (!isalnum(static_cast<unsigned char>(s[i])) && s[i] != '_') {
-                return "Username dai 3-20 ky tu, chi gom chu, so, _ va bat dau bang chu";
-            }
-        }
+    /**********************************************************
+    * @Description Kiểm tra fullName có dùng được làm họ tên không
+    *
+    * @return Chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
+    * @attention Họ tên dài 1-50 ký tự, chỉ gồm chữ cái không dấu và dấu cách
+    **********************************************************/
+    static std::string checkFullName(const std::string& fullName);
 
-        vector<string> reserved = {"con", "prn", "aux", "nul"};
-        for (int number = 1; number <= 9; number++) {
-            reserved.push_back("com" + to_string(number));
-            reserved.push_back("lpt" + to_string(number));
-        }
+    /**********************************************************
+    * @Description Kiểm tra address có dùng được làm địa chỉ không
+    *
+    * @return Chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
+    * @attention Địa chỉ dài 1-100 ký tự, mỗi ký tự có mã từ 32 đến 126
+    **********************************************************/
+    static std::string checkAddress(const std::string& address);
 
-        string lower = Util::toLower(s);
-        for (size_t i = 0; i < reserved.size(); i++) {
-            if (lower == reserved[i]) {
-                return "Username trung ten danh rieng cua Windows";
-            }
-        }
-        return "";
-    }
+    /**********************************************************
+    * @Description Kiểm tra phone có dùng được làm số điện thoại không
+    *
+    * @return Chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
+    * @attention Số điện thoại gồm đúng 10 chữ số và bắt đầu bằng 0
+    **********************************************************/
+    static std::string checkPhone(const std::string& phone);
 
-    // Kiểm s có dùng được làm mật khẩu không: 6-20 ký tự, mỗi ký tự có mã từ 33 đến 126
-    static string checkPassword(const string& s) {
-        if (s.length() < 6 || s.length() > 20) {
-            return "Mat khau dai 6-20 ky tu, khong co dau cach va chu co dau";
-        }
+    /**********************************************************
+    * @Description Kiểm tra email có dùng được làm email không
+    *
+    * @return Chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
+    * @attention Email có dạng ten@ten-mien.duoi, tối đa 50 ký tự, không có dấu cách
+    **********************************************************/
+    static std::string checkEmail(const std::string& email);
 
-        for (size_t i = 0; i < s.length(); i++) {
-            int code = static_cast<unsigned char>(s[i]);
-            if (code < 33 || code > 126) {
-                return "Mat khau dai 6-20 ky tu, khong co dau cach va chu co dau";
-            }
-        }
-        return "";
-    }
+    /**********************************************************
+    * @Description Kiểm tra value có hợp lệ cho thông tin field không, bằng cách gọi hàm kiểm tương ứng
+    *
+    * @return Chuỗi rỗng nếu hợp lệ, không thì trả về câu mô tả lỗi
+    **********************************************************/
+    static std::string checkField(const ProfileField field, const std::string& value);
 
-    // Kiểm s có dùng được làm họ tên không: 1-50 ký tự, chỉ gồm chữ không dấu và dấu cách
-    static string checkFullName(const string& s) {
-        if (s.empty() || s.length() > 50) {
-            return "Ho ten 1-50 ky tu, chi gom chu khong dau va dau cach";
-        }
+private:
+    /**********************************************************
+    * @Description Kiểm tra mọi ký tự của text có mã nằm trong khoảng từ minCode đến maxCode không
+    *
+    * @return true nếu mọi ký tự đều nằm trong khoảng
+    **********************************************************/
+    static bool isAllCharsInRange(const std::string& text, const int minCode, const int maxCode);
 
-        for (size_t i = 0; i < s.length(); i++) {
-            if (!isalpha(static_cast<unsigned char>(s[i])) && s[i] != ' ') {
-                return "Ho ten 1-50 ky tu, chi gom chu khong dau va dau cach";
-            }
-        }
-        return "";
-    }
+    /**********************************************************
+    * @Description Kiểm tra mọi ký tự của text có là chữ không dấu, số hoặc dấu _ không
+    *
+    * @return true nếu mọi ký tự đều hợp lệ
+    **********************************************************/
+    static bool isAllUsernameChars(const std::string& text);
 
-    // Kiểm s có dùng được làm địa chỉ không: 1-100 ký tự, mỗi ký tự có mã từ 32 đến 126
-    static string checkAddress(const string& s) {
-        if (s.empty() || s.length() > 100) {
-            return "Dia chi 1-100 ky tu, khong dung chu co dau";
-        }
+    /**********************************************************
+    * @Description Kiểm tra mọi ký tự của text có là chữ không dấu hoặc dấu cách không
+    *
+    * @return true nếu mọi ký tự đều hợp lệ
+    **********************************************************/
+    static bool isAllLettersOrSpaces(const std::string& text);
 
-        for (size_t i = 0; i < s.length(); i++) {
-            int code = static_cast<unsigned char>(s[i]);
-            if (code < 32 || code > 126) {
-                return "Dia chi 1-100 ky tu, khong dung chu co dau";
-            }
-        }
-        return "";
-    }
+    /**********************************************************
+    * @Description Kiểm tra lowerName có trùng tên file danh riêng của Windows không
+    *
+    * @return true nếu trùng
+    * @attention lowerName phải là chữ thường
+    **********************************************************/
+    static bool isReservedName(const std::string& lowerName);
 
-    // Kiểm s có dùng được làm số điện thoại không: đúng 10 chữ số và bắt đầu bằng 0
-    static string checkPhone(const string& s) {
-        if (s.length() != 10 || !Util::isAllDigits(s) || s[0] != '0') {
-            return "So dien thoai gom dung 10 chu so va bat dau bang 0";
-        }
-        return "";
-    }
+    // Độ dài ngắn nhất và dài nhất của username
+    static const std::size_t MIN_USERNAME_LENGTH = 3;
+    static const std::size_t MAX_USERNAME_LENGTH = 20;
 
-    // Kiểm s có dùng được làm email không: dạng ten@ten-mien.duoi, tối đa 50 ký tự, không có dấu cách
-    static string checkEmail(const string& s) {
-        string error = "Email khong hop le (vi du dung: ten@gmail.com)";
+    // Độ dài ngắn nhất và dài nhất của mật khẩu
+    static const std::size_t MIN_PASSWORD_LENGTH = 6;
+    static const std::size_t MAX_PASSWORD_LENGTH = 20;
 
-        if (s.empty() || s.length() > 50) {
-            return error;
-        }
+    // Độ dài dài nhất của họ tên, địa chỉ, email
+    static const std::size_t MAX_FULL_NAME_LENGTH = 50;
+    static const std::size_t MAX_ADDRESS_LENGTH = 100;
+    static const std::size_t MAX_EMAIL_LENGTH = 50;
 
-        for (size_t i = 0; i < s.length(); i++) {
-            int code = static_cast<unsigned char>(s[i]);
-            if (code < 33 || code > 126) {
-                return error;
-            }
-        }
+    // Số điện thoại gồm đúng ngần này chữ số, chữ số đầu là PHONE_FIRST_DIGIT
+    static const std::size_t PHONE_LENGTH = 10;
+    static const char PHONE_FIRST_DIGIT = '0';
 
-        size_t at = s.find('@');
-        if (at == string::npos || at == 0) {
-            return error;
-        }
+    // Mã ASCII của dấu cách, của ký tự nhìn thấy đầu tiên (sau dấu cách) và cuối cùng
+    static const int ASCII_SPACE = 32;
+    static const int ASCII_FIRST_VISIBLE = 33;
+    static const int ASCII_LAST_VISIBLE = 126;
 
-        if (s.find('@', at + 1) != string::npos) {
-            return error;
-        }
+    // Số lớn nhất đứng sau tên com và lpt của Windows (com1 đến com9, lpt1 đến lpt9)
+    static const int MAX_DEVICE_NUMBER = 9;
 
-        size_t dot = s.find('.', at + 1);
-        if (dot == string::npos || dot == at + 1 || dot == s.length() - 1) {
-            return error;
-        }
-        return "";
-    }
-
-    // Kiểm value có hợp lệ cho thông tin field không, bằng cách gọi hàm kiểm tương ứng
-    static string checkField(ProfileField field, const string& value) {
-        switch (field) {
-            case ProfileField::FULL_NAME: return checkFullName(value);
-            case ProfileField::ADDRESS:   return checkAddress(value);
-            case ProfileField::PHONE:     return checkPhone(value);
-            case ProfileField::EMAIL:     return checkEmail(value);
-        }
-        return "";
-    }
+    // Các câu thông báo lỗi
+    static const std::string ERROR_USERNAME;
+    static const std::string ERROR_USERNAME_RESERVED;
+    static const std::string ERROR_PASSWORD;
+    static const std::string ERROR_FULL_NAME;
+    static const std::string ERROR_ADDRESS;
+    static const std::string ERROR_PHONE;
+    static const std::string ERROR_EMAIL;
 };

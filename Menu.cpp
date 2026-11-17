@@ -1,32 +1,36 @@
 #include "Menu.h"
 #include "Console.h"
 
+using namespace std;
+
+const string Menu::LOGOUT_LABEL = "Thoat (dang xuat)";
+
 Menu::Menu(const string& title, const string& exitLabel)
-    : m_title(title), m_exitLabel(exitLabel) {
+    : m_strTitle(title), m_strExitLabel(exitLabel) {
 }
 
 void Menu::run() {
     while (true) {
         Console::clearScreen();
-        Console::printTitle(m_title);
+        Console::printTitle(this->m_strTitle);
 
-        vector<string> options = getOptions();
-        options.push_back(m_exitLabel);
+        vector<string> options = this->getOptions();
+        options.push_back(this->m_strExitLabel);
 
-        int choice = Console::chooseOption(options);
-        if (choice == static_cast<int>(options.size())) {
+        const int iChoice = Console::chooseOption(options);
+        if (iChoice == static_cast<int>(options.size())) {
             return;
         }
 
-        handleChoice(choice);
+        this->handleChoice(iChoice);
         Console::pause();
     }
 }
 
 void Menu::printProfile(const string& username, const UserProfile& profile) {
     Console::printLine("Username: " + username);
-    for (int i = 0; i < UserProfile::FIELD_COUNT; i++) {
-        ProfileField field = static_cast<ProfileField>(i);
-        Console::printLine(UserProfile::labelOf(field) + ": " + profile.get(field));
+    for (int iField = 0; iField < UserProfile::FIELD_COUNT; iField++) {
+        const ProfileField eField = static_cast<ProfileField>(iField);
+        Console::printLine(UserProfile::labelOf(eField) + ": " + profile.get(eField));
     }
 }

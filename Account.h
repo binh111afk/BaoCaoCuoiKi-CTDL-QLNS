@@ -1,57 +1,75 @@
 #pragma once
 #include <string>
-#include "Util.h"
-
-using namespace std;
 
 // Vai trò của một tài khoản: quản trị viên hoặc nhân viên
 enum class Role { ADMIN, EMPLOYEE };
 
 // Lớp cha của mọi tài khoản, chỉ tạo được Admin hoặc Employee
 class Account {
+public:
+    /**********************************************************
+    * @Description Tạo tài khoản với tên đăng nhập username và mật khẩu password
+    *
+    * @attention Chỉ Admin và Employee gọi được vì Account có hàm thuần ảo
+    **********************************************************/
+    Account(const std::string& username, const std::string& password);
+
+    virtual ~Account() = default;
+
+    /**********************************************************
+    * @Description Lấy tên đăng nhập của một tài khoản
+    *
+    * @return Tên đăng nhập, đúng chữ hoa chữ thường như lúc tạo
+    **********************************************************/
+    std::string getUsername() const;
+
+    /**********************************************************
+    * @Description Lấy mật khẩu của một tài khoản
+    *
+    * @return Mật khẩu nguyên văn
+    * @attention Chỉ dùng khi ghi file, muốn kiểm mật khẩu thì dùng checkPassword
+    **********************************************************/
+    std::string getPassword() const;
+
+    /**********************************************************
+    * @Description So name với tên đăng nhập của tài khoản mà không phân biệt hoa thường
+    *
+    * @return true nếu name giống tên đăng nhập của tài khoản
+    **********************************************************/
+    bool matchesUsername(const std::string& name) const;
+
+    /**********************************************************
+    * @Description Kiểm tra xem password có đúng với mật khẩu của Account hay không
+    *
+    * @return true nếu password giống hệt mật khẩu (có phân biệt hoa thường)
+    **********************************************************/
+    bool checkPassword(const std::string& password) const;
+
+    /**********************************************************
+    * @Description Đổi mật khẩu của tài khoản thành newPassword
+    *
+    * @attention Chỉ đổi trong bộ nhớ, muốn lưu thì nơi gọi phải ghi lại file
+    **********************************************************/
+    void setPassword(const std::string& newPassword);
+
+    /**********************************************************
+    * @Description Tạo một dòng chữ chứa dữ liệu của tài khoản để ghi vào file
+    *
+    * @return Dòng chữ không có ký tự xuống dòng
+    **********************************************************/
+    virtual std::string toLine() const = 0;
+
+    /**********************************************************
+    * @Description Lấy vai trò của tài khoản
+    *
+    * @return Role::ADMIN hoặc Role::EMPLOYEE tùy lớp con
+    **********************************************************/
+    virtual Role getRole() const = 0;
+
 private:
     // Tên đăng nhập, giữ đúng chữ hoa chữ thường như lúc tạo
-    string m_username;
+    std::string m_strUsername;
 
     // Mật khẩu, lưu nguyên văn như trong file
-    string m_password;
-
-public:
-    // Tạo tài khoản với tên đăng nhập username và mật khẩu password (chỉ Admin và Employee gọi được)
-    Account(const string& username, const string& password)
-        : m_username(username), m_password(password) {
-    }
-    virtual ~Account() {}
-
-    // Trả về tên đăng nhập của một tài khoản
-    string getUsername() const {
-        return m_username;
-    }
-
-    // Trả về mật khẩu của một tài khoản (chỉ dùng khi ghi file, kiểm mật khẩu thì dùng checkPassword)
-    string getPassword() const {
-        return m_password;
-    }
-
-    // Trả về true nếu name giống tên đăng nhập của tài khoản (không phân biệt hoa thường)
-    bool matchesUsername(const string& name) const {
-        return Util::equalsIgnoreCase(m_username, name);
-    }
-
-    // Kiểm tra xem password có đúng với mật khẩu của Account hay không (có phân biệt hoa thường)
-    // Nếu đúng thì trả về true
-    bool checkPassword(const string& password) const {
-        return m_password == password;
-    }
-
-    // Đổi mật khẩu của tài khoản thành newPassword, chỉ đổi trong bộ nhớ
-    void setPassword(const string& newPassword) {
-        m_password = newPassword;
-    }
-
-    // Trả về một dòng chữ chứa dữ liệu của tài khoản để ghi vào file
-    virtual string toLine() const = 0;
-
-    // Trả về vai trò của tài khoản
-    virtual Role getRole() const = 0;
+    std::string m_strPassword;
 };

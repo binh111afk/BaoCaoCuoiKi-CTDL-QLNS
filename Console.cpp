@@ -5,166 +5,198 @@
 #include "Console.h"
 #include "Util.h"
 
-void Console::setColor(int color) {
+using namespace std;
+
+void Console::setColor(const int color) {
     cout.flush();
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), static_cast<WORD>(color));
 }
 
-void Console::printLine(const string& text, int color) {
-    setColor(color);
+void Console::printLine(const string& text, const int color) {
+    Console::setColor(color);
     cout << text << endl;
-    setColor(COLOR_NORMAL);
+    Console::setColor(Console::COLOR_NORMAL);
 }
 
 void Console::printTitle(const string& title) {
-    size_t width = 36;
-    size_t left = (width - title.length()) / 2;
-    size_t right = width - title.length() - left;
+    size_t iPadding = 0;
+    if (title.length() < Console::TITLE_WIDTH) {
+        iPadding = Console::TITLE_WIDTH - title.length();
+    }
+    const size_t iLeft = iPadding / 2;
+    const size_t iRight = iPadding - iLeft;
 
-    string stars = string(width + 2, '*');
-    string middle = "*" + string(left, ' ') + title + string(right, ' ') + "*";
+    const string strBorder(Console::TITLE_WIDTH + Console::TITLE_BORDER_SIDES, Console::TITLE_BORDER);
+    const string strMiddle = string(1, Console::TITLE_BORDER) + string(iLeft, ' ') + title
+        + string(iRight, ' ') + string(1, Console::TITLE_BORDER);
 
-    printLine(stars, COLOR_TITLE);
-    printLine(middle, COLOR_TITLE);
-    printLine(stars, COLOR_TITLE);
+    Console::printLine(strBorder, Console::COLOR_TITLE);
+    Console::printLine(strMiddle, Console::COLOR_TITLE);
+    Console::printLine(strBorder, Console::COLOR_TITLE);
 }
 
 void Console::printSuccess(const string& message) {
-    printLine(message, COLOR_SUCCESS);
+    Console::printLine(message, Console::COLOR_SUCCESS);
 }
 
 void Console::printError(const string& message) {
-    printLine(message, COLOR_ERROR);
+    Console::printLine(message, Console::COLOR_ERROR);
 }
 
 string Console::readLine(const string& prompt) {
-    setColor(COLOR_LABEL);
+    Console::setColor(Console::COLOR_LABEL);
     cout << prompt;
-    setColor(COLOR_NORMAL);
+    Console::setColor(Console::COLOR_NORMAL);
 
-    string line;
-    if (!getline(cin, line)) {
+    string strLine;
+    if (!getline(cin, strLine)) {
         cin.clear();
         return "";
     }
-    return Util::trim(line);
+    return Util::trim(strLine);
 }
 
 string Console::readPassword(const string& prompt) {
-    setColor(COLOR_LABEL);
+    Console::setColor(Console::COLOR_LABEL);
     cout << prompt;
-    setColor(COLOR_NORMAL);
+    Console::setColor(Console::COLOR_NORMAL);
     cout.flush();
 
-    string password;
-    while (true) {
-        int key = _getch();
-        if (key == 13) {
-            break;
-        }
-
-        if (key == 0 || key == 224) {
-            _getch();
-        } else if (key == 8) {
-            if (!password.empty()) {
-                password.pop_back();
-                cout << "\b \b";
-                cout.flush();
-            }
-        } else if (key >= 32) {
-            password += static_cast<char>(key);
-            cout << '*';
-            cout.flush();
-        }
+    string strPassword;
+    int iKey = _getch();
+    while (iKey != Console::KEY_ENTER) {
+        Console::applyPasswordKey(iKey, strPassword);
+        iKey = _getch();
     }
     cout << endl;
-    return password;
+    return strPassword;
 }
 
-int Console::chooseOption(const vector<string>& items, int startAt) {
-    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+int Console::chooseOption(const vector<string>& items, const int startAt) {
+    HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    CONSOLE_CURSOR_INFO oldCursor;
-    GetConsoleCursorInfo(handle, &oldCursor);
+    CONSOLE_CURSOR_INFO oldCursor = {};
+    GetConsoleCursorInfo(hOutput, &oldCursor);
     CONSOLE_CURSOR_INFO hiddenCursor = oldCursor;
     hiddenCursor.bVisible = FALSE;
-    SetConsoleCursorInfo(handle, &hiddenCursor);
+    SetConsoleCursorInfo(hOutput, &hiddenCursor);
 
-    size_t size = items.size();
-    int count = static_cast<int>(size);
-    printLine("(Mui ten len/xuong de chon, Enter de xac nhan)", COLOR_LABEL);
-    for (size_t i = 0; i < size; i++) {
+    const int iCount = static_cast<int>(items.size());
+    Console::printLine("(Mui ten len/xuong de chon, Enter de xac nhan)", Console::COLOR_LABEL);
+    for (int iLine = 0; iLine < iCount; iLine++) {
         cout << endl;
     }
 
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(handle, &info);
+    CONSOLE_SCREEN_BUFFER_INFO info = {};
+    GetConsoleScreenBufferInfo(hOutput, &info);
     COORD listStart = info.dwCursorPosition;
-    listStart.Y = static_cast<SHORT>(listStart.Y - count);
+    listStart.Y = static_cast<SHORT>(listStart.Y - iCount);
 
-    int selected = startAt;
-    while (true) {
-        SetConsoleCursorPosition(handle, listStart);
-        for (size_t i = 0; i < size; i++) {
-            if (static_cast<int>(i) + 1 == selected) {
-                setColor(COLOR_SELECTED);
-                cout << "> " << items[i];
-                setColor(COLOR_NORMAL);
-                cout << endl;
-            } else {
-                cout << "  " << items[i] << endl;
-            }
-        }
-
-        int key = _getch();
-        if (key == 13) {
-            break;
-        }
-
-        if (key == 0 || key == 224) {
-            key = _getch();
-            if (key == 72) {
-                selected--;
-                if (selected < 1) {
-                    selected = count;
-                }
-            } else if (key == 80) {
-                selected++;
-                if (selected > count) {
-                    selected = 1;
-                }
-            }
-        }
+    int iSelected = startAt;
+    bool bConfirmed = false;
+    while (!bConfirmed) {
+        SetConsoleCursorPosition(hOutput, listStart);
+        Console::printOptions(items, iSelected);
+        bConfirmed = Console::readSelectionKey(iSelected, iCount);
     }
 
-    SetConsoleCursorInfo(handle, &oldCursor);
-    return selected;
+    SetConsoleCursorInfo(hOutput, &oldCursor);
+    return iSelected;
 }
 
 bool Console::confirm(const string& question) {
-    string answer = readLine(question + " (y/n): ");
-    return answer == "y" || answer == "Y";
+    const string strAnswer = Console::readLine(question + " (y/n): ");
+    return strAnswer == "y" || strAnswer == "Y";
 }
 
 void Console::pause() {
-    printLine("Nhan phim bat ky de tiep tuc...");
-    int key = _getch();
-    if (key == 0 || key == 224) {
+    Console::printLine("Nhan phim bat ky de tiep tuc...");
+    const int iKey = _getch();
+    if (iKey == Console::KEY_EXTENDED_ZERO || iKey == Console::KEY_EXTENDED_E0) {
         _getch();
     }
 }
 
 void Console::clearScreen() {
     cout.flush();
-    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    CONSOLE_SCREEN_BUFFER_INFO info;
-    GetConsoleScreenBufferInfo(handle, &info);
+    CONSOLE_SCREEN_BUFFER_INFO info = {};
+    GetConsoleScreenBufferInfo(hOutput, &info);
 
-    DWORD cells = static_cast<DWORD>(info.dwSize.X) * static_cast<DWORD>(info.dwSize.Y);
-    COORD origin = {0, 0};
-    DWORD written;
-    FillConsoleOutputCharacterA(handle, ' ', cells, origin, &written);
-    FillConsoleOutputAttribute(handle, static_cast<WORD>(COLOR_NORMAL), cells, origin, &written);
-    SetConsoleCursorPosition(handle, origin);
+    const DWORD dwCells = static_cast<DWORD>(info.dwSize.X) * static_cast<DWORD>(info.dwSize.Y);
+    const COORD origin = {0, 0};
+    DWORD dwWritten = 0;
+    FillConsoleOutputCharacterA(hOutput, ' ', dwCells, origin, &dwWritten);
+    FillConsoleOutputAttribute(hOutput, static_cast<WORD>(Console::COLOR_NORMAL), dwCells, origin, &dwWritten);
+    SetConsoleCursorPosition(hOutput, origin);
+}
+
+void Console::printOptions(const vector<string>& items, const int selected) {
+    for (size_t iIndex = 0; iIndex < items.size(); iIndex++) {
+        const int iOption = static_cast<int>(iIndex) + Console::FIRST_OPTION;
+        if (iOption == selected) {
+            Console::setColor(Console::COLOR_SELECTED);
+            cout << "> " << items[iIndex];
+            Console::setColor(Console::COLOR_NORMAL);
+            cout << endl;
+        } else {
+            cout << "  " << items[iIndex] << endl;
+        }
+    }
+}
+
+bool Console::readSelectionKey(int& selected, const int count) {
+    const int iKey = _getch();
+    if (iKey == Console::KEY_ENTER) {
+        return true;
+    }
+
+    if (iKey == Console::KEY_EXTENDED_ZERO || iKey == Console::KEY_EXTENDED_E0) {
+        Console::moveSelection(_getch(), selected, count);
+    }
+    return false;
+}
+
+void Console::moveSelection(const int arrowKey, int& selected, const int count) {
+    switch (arrowKey) {
+        case Console::KEY_UP:
+            selected = (selected <= Console::FIRST_OPTION) ? count : selected - 1;
+            break;
+
+        case Console::KEY_DOWN:
+            selected = (selected >= count) ? Console::FIRST_OPTION : selected + 1;
+            break;
+
+        default:
+            break;
+    }
+}
+
+void Console::applyPasswordKey(const int key, string& password) {
+    if (key == Console::KEY_EXTENDED_ZERO || key == Console::KEY_EXTENDED_E0) {
+        _getch();
+        return;
+    }
+
+    if (key == Console::KEY_BACKSPACE) {
+        Console::removeLastPasswordChar(password);
+        return;
+    }
+
+    if (key >= Console::KEY_FIRST_PRINTABLE) {
+        password += static_cast<char>(key);
+        cout << Console::PASSWORD_MASK;
+        cout.flush();
+    }
+}
+
+void Console::removeLastPasswordChar(string& password) {
+    if (password.empty()) {
+        return;
+    }
+
+    password.pop_back();
+    cout << "\b \b";
+    cout.flush();
 }
