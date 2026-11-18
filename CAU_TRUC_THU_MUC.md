@@ -5,6 +5,8 @@ HrApp/
 │
 ├── main.cpp                           main()
 │
+├── Node.h                             Node<DataType>
+├── LinkedList.h                       LinkedList<DataType>
 ├── Util.h / Util.cpp                  Util
 ├── Account.h / Account.cpp            Role, Account
 ├── Admin.h / Admin.cpp                Admin
@@ -26,4 +28,4 @@ HrApp/
         └── nva.txt                    4 dòng: họ tên, địa chỉ, số điện thoại, email
 ```
 
-`AccountList` là lớp mẫu (template) nên được viết hết trong file `.h`.
+`Node`, `LinkedList` và `AccountList` là lớp mẫu (template) nên được viết hết trong file `.h`. `LinkedList` là danh sách liên kết đơn theo giáo trình; chương trình không dùng `std::vector`.

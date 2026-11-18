@@ -39,6 +39,22 @@ public:
     bool matchesUsername(const std::string& name) const;
 
     /**********************************************************
+    * @Description So hai tài khoản theo khóa là tên đăng nhập (không phân biệt hoa thường)
+    *
+    * @return true nếu hai tài khoản có cùng tên đăng nhập
+    * @attention Để LinkedList::search và LinkedList::remove tìm tài khoản theo khóa
+    **********************************************************/
+    bool operator==(const Account& other) const;
+
+    /**********************************************************
+    * @Description Xếp thứ tự hai tài khoản theo tên đăng nhập (không phân biệt hoa thường)
+    *
+    * @return true nếu tên đăng nhập của tài khoản này đứng trước tên đăng nhập của other
+    * @attention Để LinkedList::selectionSort sắp xếp tài khoản tăng dần theo tên đăng nhập
+    **********************************************************/
+    bool operator<(const Account& other) const;
+
+    /**********************************************************
     * @Description Kiểm tra xem password có đúng với mật khẩu của Account hay không
     *
     * @return true nếu password giống hệt mật khẩu (có phân biệt hoa thường)

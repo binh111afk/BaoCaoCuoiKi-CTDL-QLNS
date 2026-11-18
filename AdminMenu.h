@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <vector>
+#include "LinkedList.h"
 #include "Menu.h"
 #include "HrSystem.h"
 
@@ -29,7 +29,7 @@ private:
     *
     * @return Danh sách 5 tên mục
     **********************************************************/
-    std::vector<std::string> getOptions() const override;
+    LinkedList<std::string> getOptions() const override;
 
     /**********************************************************
     * @Description Gọi chức năng ứng với số choice (từ 1 tới 5)

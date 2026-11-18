@@ -117,6 +117,10 @@ private:
     // Số lớn nhất đứng sau tên com và lpt của Windows (com1 đến com9, lpt1 đến lpt9)
     static const int MAX_DEVICE_NUMBER = 9;
 
+    // Các tên file dành riêng của Windows (không có số đi kèm), lưu trong mảng RESERVED_NAME_COUNT phần tử
+    static const std::size_t RESERVED_NAME_COUNT = 4;
+    static const char* const RESERVED_NAMES[RESERVED_NAME_COUNT];
+
     // Các câu thông báo lỗi
     static const std::string ERROR_USERNAME;
     static const std::string ERROR_USERNAME_RESERVED;

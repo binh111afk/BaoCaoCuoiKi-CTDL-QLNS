@@ -1,10 +1,10 @@
 #include <cctype>
-#include <vector>
 #include "Validator.h"
 #include "Util.h"
 
 using namespace std;
 
+const char* const Validator::RESERVED_NAMES[Validator::RESERVED_NAME_COUNT] = {"con", "prn", "aux", "nul"};
 const string Validator::ERROR_USERNAME = "Username dai 3-20 ky tu, chi gom chu, so, _ va bat dau bang chu";
 const string Validator::ERROR_USERNAME_RESERVED = "Username trung ten danh rieng cua Windows";
 const string Validator::ERROR_PASSWORD = "Mat khau dai 6-20 ky tu, khong co dau cach va chu co dau";
@@ -143,9 +143,8 @@ bool Validator::isAllLettersOrSpaces(const string& text) {
 }
 
 bool Validator::isReservedName(const string& lowerName) {
-    const vector<string> reservedNames = {"con", "prn", "aux", "nul"};
-    for (size_t iIndex = 0; iIndex < reservedNames.size(); iIndex++) {
-        if (lowerName == reservedNames[iIndex]) {
+    for (size_t iIndex = 0; iIndex < Validator::RESERVED_NAME_COUNT; iIndex++) {
+        if (lowerName == Validator::RESERVED_NAMES[iIndex]) {
             return true;
         }
     }

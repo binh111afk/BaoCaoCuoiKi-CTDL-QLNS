@@ -6,12 +6,12 @@
 using namespace std;
 
 int Application::run() {
-    vector<string> messages;
+    LinkedList<string> messages;
     const bool bReady = this->m_system.initialize(messages);
 
     const int iColor = bReady ? Console::COLOR_TITLE : Console::COLOR_ERROR;
-    for (size_t iIndex = 0; iIndex < messages.size(); iIndex++) {
-        Console::printLine(messages[iIndex], iColor);
+    for (Node<string>* pMessage = messages.getHead(); pMessage != nullptr; pMessage = pMessage->getNext()) {
+        Console::printLine(pMessage->getData(), iColor);
     }
 
     if (!bReady) {
@@ -20,7 +20,7 @@ int Application::run() {
         return 1;
     }
 
-    if (!messages.empty()) {
+    if (!messages.isEmpty()) {
         Console::pause();
     }
 

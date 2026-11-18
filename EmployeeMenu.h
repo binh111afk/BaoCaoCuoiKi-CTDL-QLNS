@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <vector>
+#include "LinkedList.h"
 #include "Menu.h"
 #include "HrSystem.h"
 
@@ -34,7 +34,7 @@ private:
     *
     * @return Danh sách 2 tên mục
     **********************************************************/
-    std::vector<std::string> getOptions() const override;
+    LinkedList<std::string> getOptions() const override;
 
     /**********************************************************
     * @Description Gọi chức năng ứng với số choice (1 hoặc 2)

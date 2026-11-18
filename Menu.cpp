@@ -14,11 +14,11 @@ void Menu::run() {
         Console::clearScreen();
         Console::printTitle(this->m_strTitle);
 
-        vector<string> options = this->getOptions();
-        options.push_back(this->m_strExitLabel);
+        LinkedList<string> options = this->getOptions();
+        options.addTail(this->m_strExitLabel);
 
         const int iChoice = Console::chooseOption(options);
-        if (iChoice == static_cast<int>(options.size())) {
+        if (iChoice == options.getSize()) {
             return;
         }
 

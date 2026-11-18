@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <vector>
+#include "LinkedList.h"
 #include "Account.h"
 #include "Admin.h"
 #include "Employee.h"
@@ -23,7 +23,7 @@ public:
     * @return true nếu quá trình thực hiện ổn
     * @attention Biến messages ghi lại các log trong quá trình nạp (liệu có tài khoản nào trùng nhau hay không, ...)
     **********************************************************/
-    bool initialize(std::vector<std::string>& messages);
+    bool initialize(LinkedList<std::string>& messages);
 
     /**********************************************************
     * @Description Kiểm tra có tồn tại một tài khoản với username và password đúng hay không
@@ -99,7 +99,7 @@ public:
     *
     * @attention Danh sách được sắp xếp tăng dần theo username
     **********************************************************/
-    void listEmployees(std::vector<std::string>& usernames);
+    void listEmployees(LinkedList<std::string>& usernames);
 
     /**********************************************************
     * @Description Đổi mật khẩu của nhân viên username thành newPassword
@@ -130,7 +130,7 @@ private:
     * @return true nếu quá trình thực hiện ổn
     * @attention Chưa có file thì tạo file rỗng, lỗi được ghi vào messages
     **********************************************************/
-    bool loadFiles(std::vector<std::string>& messages);
+    bool loadFiles(LinkedList<std::string>& messages);
 
     /**********************************************************
     * @Description Xóa bỏ các trường hợp tên đăng nhập của nhân viên bị trùng với admin và bị trùng với nhân viên khác
@@ -138,14 +138,14 @@ private:
     * @return true nếu quá trình thực hiện ổn
     * @attention Phòng hờ có người sửa thẳng tệp txt
     **********************************************************/
-    bool removeDuplicateEmployees(std::vector<std::string>& messages);
+    bool removeDuplicateEmployees(LinkedList<std::string>& messages);
 
     /**********************************************************
     * @Description Tạo 3 tài khoản admin mặc định theo đề (trong trường hợp không đủ tài khoản mặc định)
     *
     * @return true nếu quá trình thực hiện ổn
     **********************************************************/
-    bool createDefaultAdmins(std::vector<std::string>& messages);
+    bool createDefaultAdmins(LinkedList<std::string>& messages);
 
     // Số admin tối thiểu mà chương trình phải có, thiếu thì tạo admin mặc định
     static const int DEFAULT_ADMIN_COUNT = 3;

@@ -72,7 +72,7 @@ string Console::readPassword(const string& prompt) {
     return strPassword;
 }
 
-int Console::chooseOption(const vector<string>& items, const int startAt) {
+int Console::chooseOption(const LinkedList<string>& items, const int startAt) {
     HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
 
     CONSOLE_CURSOR_INFO oldCursor = {};
@@ -81,7 +81,7 @@ int Console::chooseOption(const vector<string>& items, const int startAt) {
     hiddenCursor.bVisible = FALSE;
     SetConsoleCursorInfo(hOutput, &hiddenCursor);
 
-    const int iCount = static_cast<int>(items.size());
+    const int iCount = items.getSize();
     Console::printLine("(Mui ten len/xuong de chon, Enter de xac nhan)", Console::COLOR_LABEL);
     for (int iLine = 0; iLine < iCount; iLine++) {
         cout << endl;
@@ -132,17 +132,18 @@ void Console::clearScreen() {
     SetConsoleCursorPosition(hOutput, origin);
 }
 
-void Console::printOptions(const vector<string>& items, const int selected) {
-    for (size_t iIndex = 0; iIndex < items.size(); iIndex++) {
-        const int iOption = static_cast<int>(iIndex) + Console::FIRST_OPTION;
+void Console::printOptions(const LinkedList<string>& items, const int selected) {
+    int iOption = Console::FIRST_OPTION;
+    for (Node<string>* pItem = items.getHead(); pItem != nullptr; pItem = pItem->getNext()) {
         if (iOption == selected) {
             Console::setColor(Console::COLOR_SELECTED);
-            cout << "> " << items[iIndex];
+            cout << "> " << pItem->getData();
             Console::setColor(Console::COLOR_NORMAL);
             cout << endl;
         } else {
-            cout << "  " << items[iIndex] << endl;
+            cout << "  " << pItem->getData() << endl;
         }
+        iOption++;
     }
 }
 

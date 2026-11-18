@@ -1,7 +1,7 @@
 #pragma once
 #include <cstddef>
 #include <string>
-#include <vector>
+#include "LinkedList.h"
 
 // Lớp duy nhất đọc bàn phím và in ra màn hình, mọi thứ phụ thuộc console của Windows đều nằm ở đây
 class Console {
@@ -66,7 +66,7 @@ public:
     * @attention startAt là mục được chọn sẵn lúc đầu
     * @attention items có từ 1 đến 15 mục, con trỏ phải đang ở đầu một dòng
     **********************************************************/
-    static int chooseOption(const std::vector<std::string>& items, const int startAt = 1);
+    static int chooseOption(const LinkedList<std::string>& items, const int startAt = 1);
 
     /**********************************************************
     * @Description Hỏi question kèm (y/n) rồi đọc một dòng
@@ -91,7 +91,7 @@ private:
     *
     * @attention selected đếm từ 1
     **********************************************************/
-    static void printOptions(const std::vector<std::string>& items, const int selected);
+    static void printOptions(const LinkedList<std::string>& items, const int selected);
 
     /**********************************************************
     * @Description Đọc một phím trong lúc chọn mục: Enter để chốt, mũi tên để dời mục đang chọn

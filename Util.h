@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <vector>
+#include "LinkedList.h"
 
 // Các hàm tĩnh dùng chung: xử lý chuỗi, đọc ghi file và tạo thư mục
 class Util {
@@ -40,7 +40,7 @@ public:
     * @return true nếu đọc được file
     * @attention Trả về false và lines rỗng nếu không mở được file
     **********************************************************/
-    static bool readLines(const std::string& path, std::vector<std::string>& lines);
+    static bool readLines(const std::string& path, LinkedList<std::string>& lines);
 
     /**********************************************************
     * @Description Ghi đè file path bằng các dòng trong lines (chưa có file thì tạo mới)
@@ -48,7 +48,7 @@ public:
     * @return true nếu ghi được file
     * @attention Thư mục chứa file phải tồn tại trước
     **********************************************************/
-    static bool writeLines(const std::string& path, const std::vector<std::string>& lines);
+    static bool writeLines(const std::string& path, const LinkedList<std::string>& lines);
 
     /**********************************************************
     * @Description Xóa file path khỏi ổ đĩa

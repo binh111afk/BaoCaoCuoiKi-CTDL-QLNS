@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <vector>
+#include "LinkedList.h"
 #include "UserProfile.h"
 
 // Khung chung của menu: lớp con chỉ cần viết getOptions và handleChoice, vòng lặp menu đã có sẵn ở run
@@ -39,7 +39,7 @@ private:
     * @return Danh sách tên mục, không gồm mục thoát
     * @attention Mục thứ i (đếm từ 0) ứng với lựa chọn i + 1
     **********************************************************/
-    virtual std::vector<std::string> getOptions() const = 0;
+    virtual LinkedList<std::string> getOptions() const = 0;
 
     /**********************************************************
     * @Description Chạy chức năng ứng với số choice mà người dùng vừa chọn

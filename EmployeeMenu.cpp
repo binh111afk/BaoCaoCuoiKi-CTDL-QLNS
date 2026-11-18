@@ -28,11 +28,11 @@ bool EmployeeMenu::forcePasswordChange() {
     return true;
 }
 
-vector<string> EmployeeMenu::getOptions() const {
-    return {
-        "Xem thong tin tai khoan",
-        "Doi password"
-    };
+LinkedList<string> EmployeeMenu::getOptions() const {
+    LinkedList<string> options;
+    options.addTail("Xem thong tin tai khoan");
+    options.addTail("Doi password");
+    return options;
 }
 
 void EmployeeMenu::handleChoice(const int choice) {

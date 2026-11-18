@@ -43,7 +43,7 @@ bool Util::isAllDigits(const string& text) {
     return true;
 }
 
-bool Util::readLines(const string& path, vector<string>& lines) {
+bool Util::readLines(const string& path, LinkedList<string>& lines) {
     lines.clear();
     ifstream file(path);
     if (!file.is_open()) {
@@ -52,20 +52,20 @@ bool Util::readLines(const string& path, vector<string>& lines) {
 
     string strLine;
     while (getline(file, strLine)) {
-        lines.push_back(Util::trim(strLine));
+        lines.addTail(Util::trim(strLine));
     }
     file.close();
     return true;
 }
 
-bool Util::writeLines(const string& path, const vector<string>& lines) {
+bool Util::writeLines(const string& path, const LinkedList<string>& lines) {
     ofstream file(path);
     if (!file.is_open()) {
         return false;
     }
 
-    for (size_t iIndex = 0; iIndex < lines.size(); iIndex++) {
-        file << lines[iIndex] << "\n";
+    for (Node<string>* pLine = lines.getHead(); pLine != nullptr; pLine = pLine->getNext()) {
+        file << pLine->getData() << "\n";
     }
     file.close();
     return !file.fail();

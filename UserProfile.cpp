@@ -29,21 +29,23 @@ string UserProfile::labelOf(const ProfileField field) {
     }
 }
 
-vector<string> UserProfile::toLines() const {
-    vector<string> lines;
+LinkedList<string> UserProfile::toLines() const {
+    LinkedList<string> lines;
     for (int iField = 0; iField < UserProfile::FIELD_COUNT; iField++) {
-        lines.push_back(this->m_strValues[iField]);
+        lines.addTail(this->m_strValues[iField]);
     }
     return lines;
 }
 
-bool UserProfile::fromLines(const vector<string>& lines, UserProfile& out) {
-    if (lines.size() < static_cast<size_t>(UserProfile::FIELD_COUNT)) {
+bool UserProfile::fromLines(const LinkedList<string>& lines, UserProfile& out) {
+    if (lines.getSize() < UserProfile::FIELD_COUNT) {
         return false;
     }
 
+    Node<string>* pLine = lines.getHead();
     for (int iField = 0; iField < UserProfile::FIELD_COUNT; iField++) {
-        out.m_strValues[iField] = lines[static_cast<size_t>(iField)];
+        out.m_strValues[iField] = pLine->getData();
+        pLine = pLine->getNext();
     }
     return true;
 }

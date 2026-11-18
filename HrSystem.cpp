@@ -18,7 +18,7 @@ HrSystem::HrSystem() :
     m_employees(HrSystem::EMPLOYEE_FILE_PATH) {
 }
 
-bool HrSystem::initialize(vector<string>& messages) {
+bool HrSystem::initialize(LinkedList<string>& messages) {
     return this->loadFiles(messages)
         && this->removeDuplicateEmployees(messages)
         && this->createDefaultAdmins(messages);
@@ -27,17 +27,17 @@ bool HrSystem::initialize(vector<string>& messages) {
 bool HrSystem::login(const string& username, const string& password,
                      Role& role, string& accountName) {
 
-    int iIndex = this->m_admins.indexOf(username);
-    if (iIndex != AccountList<Admin>::NOT_FOUND && this->m_admins.at(iIndex).checkPassword(password)) {
-        role = this->m_admins.at(iIndex).getRole();
-        accountName = this->m_admins.at(iIndex).getUsername();
+    const Node<Admin>* const pAdmin = this->m_admins.search(username);
+    if (pAdmin != nullptr && pAdmin->getData().checkPassword(password)) {
+        role = pAdmin->getData().getRole();
+        accountName = pAdmin->getData().getUsername();
         return true;
     }
 
-    iIndex = this->m_employees.indexOf(username);
-    if (iIndex != AccountList<Employee>::NOT_FOUND && this->m_employees.at(iIndex).checkPassword(password)) {
-        role = this->m_employees.at(iIndex).getRole();
-        accountName = this->m_employees.at(iIndex).getUsername();
+    const Node<Employee>* const pEmployee = this->m_employees.search(username);
+    if (pEmployee != nullptr && pEmployee->getData().checkPassword(password)) {
+        role = pEmployee->getData().getRole();
+        accountName = pEmployee->getData().getUsername();
         return true;
     }
 
@@ -45,19 +45,19 @@ bool HrSystem::login(const string& username, const string& password,
 }
 
 bool HrSystem::needsPasswordChange(const string& username) {
-    const int iIndex = this->m_employees.indexOf(username);
-    if (iIndex == AccountList<Employee>::NOT_FOUND) {
+    const Node<Employee>* const pEmployee = this->m_employees.search(username);
+    if (pEmployee == nullptr) {
         return false;
     }
-    return this->m_employees.at(iIndex).needsPasswordChange();
+    return pEmployee->getData().needsPasswordChange();
 }
 
 bool HrSystem::verifyPassword(const string& username, const string& password) {
-    const int iIndex = this->m_employees.indexOf(username);
-    if (iIndex == AccountList<Employee>::NOT_FOUND) {
+    const Node<Employee>* const pEmployee = this->m_employees.search(username);
+    if (pEmployee == nullptr) {
         return false;
     }
-    return this->m_employees.at(iIndex).checkPassword(password);
+    return pEmployee->getData().checkPassword(password);
 }
 
 string HrSystem::checkNewUsername(const string& username) {
@@ -81,8 +81,8 @@ string HrSystem::checkNewPassword(const string& username, const string& newPassw
         return "Mat khau moi khong duoc trung voi mat khau mac dinh";
     }
 
-    const int iIndex = this->m_employees.indexOf(username);
-    if (iIndex != AccountList<Employee>::NOT_FOUND && this->m_employees.at(iIndex).checkPassword(newPassword)) {
+    const Node<Employee>* const pEmployee = this->m_employees.search(username);
+    if (pEmployee != nullptr && pEmployee->getData().checkPassword(newPassword)) {
         return "Mat khau moi khong duoc trung voi mat khau cu";
     }
     return "";
@@ -105,12 +105,12 @@ string HrSystem::addEmployee(const string& username, const UserProfile& profile)
 }
 
 string HrSystem::removeEmployee(const string& username) {
-    const int iIndex = this->m_employees.indexOf(username);
-    if (iIndex == AccountList<Employee>::NOT_FOUND) {
+    Node<Employee>* const pEmployee = this->m_employees.search(username);
+    if (pEmployee == nullptr) {
         return HrSystem::EMPLOYEE_NOT_FOUND;
     }
 
-    this->m_employees.removeAt(iIndex);
+    this->m_employees.remove(pEmployee);
     if (!this->m_employees.save()) {
         return HrSystem::FILE_ERROR;
     }
@@ -120,11 +120,11 @@ string HrSystem::removeEmployee(const string& username) {
 }
 
 string HrSystem::findEmployee(const string& username, UserProfile& profile) {
-    if (this->m_employees.indexOf(username) == AccountList<Employee>::NOT_FOUND) {
+    if (this->m_employees.search(username) == nullptr) {
         return HrSystem::EMPLOYEE_NOT_FOUND;
     }
 
-    vector<string> lines;
+    LinkedList<string> lines;
     if (!Util::readLines(HrSystem::profilePath(username), lines)) {
         return "Khong doc duoc file ho so";
     }
@@ -158,22 +158,22 @@ string HrSystem::updateField(const string& username, const ProfileField field,
     return "";
 }
 
-void HrSystem::listEmployees(vector<string>& usernames) {
+void HrSystem::listEmployees(LinkedList<string>& usernames) {
     this->m_employees.sortByUsername();
     usernames.clear();
-    for (int iIndex = 0; iIndex < this->m_employees.size(); iIndex++) {
-        usernames.push_back(this->m_employees.at(iIndex).getUsername());
+    for (Node<Employee>* pEmployee = this->m_employees.getHead(); pEmployee != nullptr; pEmployee = pEmployee->getNext()) {
+        usernames.addTail(pEmployee->getData().getUsername());
     }
 }
 
 string HrSystem::changePassword(const string& username, const string& newPassword) {
-    const int iIndex = this->m_employees.indexOf(username);
-    if (iIndex == AccountList<Employee>::NOT_FOUND) {
+    Node<Employee>* const pEmployee = this->m_employees.search(username);
+    if (pEmployee == nullptr) {
         return HrSystem::EMPLOYEE_NOT_FOUND;
     }
 
-    this->m_employees.at(iIndex).setPassword(newPassword);
-    this->m_employees.at(iIndex).setNeedsPasswordChange(false);
+    pEmployee->getData().setPassword(newPassword);
+    pEmployee->getData().setNeedsPasswordChange(false);
 
     if (!this->m_employees.save()) {
         return HrSystem::FILE_ERROR;
@@ -183,70 +183,70 @@ string HrSystem::changePassword(const string& username, const string& newPasswor
 }
 
 bool HrSystem::isUsernameTaken(const string& username) const {
-    return this->m_admins.indexOf(username) != AccountList<Admin>::NOT_FOUND
-        || this->m_employees.indexOf(username) != AccountList<Employee>::NOT_FOUND;
+    return this->m_admins.search(username) != nullptr
+        || this->m_employees.search(username) != nullptr;
 }
 
 string HrSystem::profilePath(const string& username) {
     return HrSystem::PROFILE_FOLDER + "/" + Util::toLower(username) + HrSystem::PROFILE_EXTENSION;
 }
 
-bool HrSystem::loadFiles(vector<string>& messages) {
+bool HrSystem::loadFiles(LinkedList<string>& messages) {
     if (!Util::ensureFolder(HrSystem::PROFILE_FOLDER)) {
-        messages.push_back("Khong tao duoc thu muc " + HrSystem::PROFILE_FOLDER);
+        messages.addTail("Khong tao duoc thu muc " + HrSystem::PROFILE_FOLDER);
         return false;
     }
 
     if (!this->m_admins.load() && !this->m_admins.save()) {
-        messages.push_back("Khong tao duoc file " + HrSystem::ADMIN_FILE_PATH);
+        messages.addTail("Khong tao duoc file " + HrSystem::ADMIN_FILE_PATH);
         return false;
     }
 
     if (!this->m_employees.load() && !this->m_employees.save()) {
-        messages.push_back("Khong tao duoc file " + HrSystem::EMPLOYEE_FILE_PATH);
+        messages.addTail("Khong tao duoc file " + HrSystem::EMPLOYEE_FILE_PATH);
         return false;
     }
     return true;
 }
 
-bool HrSystem::removeDuplicateEmployees(vector<string>& messages) {
+bool HrSystem::removeDuplicateEmployees(LinkedList<string>& messages) {
     bool bRemoved = false;
-    for (int iIndex = this->m_employees.size() - 1; iIndex >= 0; iIndex--) {
-        if (this->m_admins.indexOf(this->m_employees.at(iIndex).getUsername()) != AccountList<Admin>::NOT_FOUND) {
-            this->m_employees.removeAt(iIndex);
+    Node<Employee>* pEmployee = this->m_employees.getHead();
+    while (pEmployee != nullptr) {
+        Node<Employee>* const pNext = pEmployee->getNext();
+        const string strName = pEmployee->getData().getUsername();
+        const bool bDuplicate = this->m_admins.search(strName) != nullptr
+            || this->m_employees.search(strName) != pEmployee;
+        if (bDuplicate) {
+            this->m_employees.remove(pEmployee);
             bRemoved = true;
         }
-    }
-    for (int iIndex = this->m_employees.size() - 1; iIndex >= 0; iIndex--) {
-        if (this->m_employees.indexOf(this->m_employees.at(iIndex).getUsername()) != iIndex) {
-            this->m_employees.removeAt(iIndex);
-            bRemoved = true;
-        }
+        pEmployee = pNext;
     }
     if (bRemoved && !this->m_employees.save()) {
-        messages.push_back("Khong ghi duoc file " + HrSystem::EMPLOYEE_FILE_PATH);
+        messages.addTail("Khong ghi duoc file " + HrSystem::EMPLOYEE_FILE_PATH);
         return false;
     }
     return true;
 }
 
-bool HrSystem::createDefaultAdmins(vector<string>& messages) {
+bool HrSystem::createDefaultAdmins(LinkedList<string>& messages) {
     bool bCreated = false;
     int iNumber = 1;
-    while (this->m_admins.size() < HrSystem::DEFAULT_ADMIN_COUNT) {
+    while (this->m_admins.getSize() < HrSystem::DEFAULT_ADMIN_COUNT) {
         const string strName = HrSystem::DEFAULT_ADMIN_PREFIX + to_string(iNumber);
         iNumber++;
         if (this->isUsernameTaken(strName)) {
             continue;
         }
         this->m_admins.add(Admin(strName, HrSystem::DEFAULT_ADMIN_PASSWORD));
-        messages.push_back("Da tao admin mac dinh: " + strName + " / " + HrSystem::DEFAULT_ADMIN_PASSWORD);
+        messages.addTail("Da tao admin mac dinh: " + strName + " / " + HrSystem::DEFAULT_ADMIN_PASSWORD);
         bCreated = true;
     }
 
     if (bCreated) {
         if (!this->m_admins.save()) {
-            messages.push_back("Khong ghi duoc file " + HrSystem::ADMIN_FILE_PATH);
+            messages.addTail("Khong ghi duoc file " + HrSystem::ADMIN_FILE_PATH);
             return false;
         }
     }

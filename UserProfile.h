@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <vector>
+#include "LinkedList.h"
 
 // Bốn thông tin trong hồ sơ của một nhân viên, thứ tự cũng là thứ tự các dòng trong file [username].txt
 enum class ProfileField { FULL_NAME, ADDRESS, PHONE, EMAIL };
@@ -33,9 +33,9 @@ public:
     /**********************************************************
     * @Description Đưa 4 thông tin của hồ sơ thành 4 dòng theo thứ tự trong ProfileField
     *
-    * @return Vector 4 chuỗi
+    * @return Danh sách liên kết gồm 4 chuỗi
     **********************************************************/
-    std::vector<std::string> toLines() const;
+    LinkedList<std::string> toLines() const;
 
     /**********************************************************
     * @Description Lấy 4 dòng đầu của lines gán vào hồ sơ out
@@ -43,7 +43,7 @@ public:
     * @return true nếu lines có từ 4 dòng trở lên
     * @attention Trả về false thì out không bị đổi
     **********************************************************/
-    static bool fromLines(const std::vector<std::string>& lines, UserProfile& out);
+    static bool fromLines(const LinkedList<std::string>& lines, UserProfile& out);
 
 private:
     // Giá trị của 4 thông tin, đánh số theo ProfileField
